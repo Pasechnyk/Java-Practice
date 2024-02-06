@@ -19,16 +19,18 @@ public class Main {
         ShowProducts();
     }
 
+    // Меню на вибір операції
     private static void menu() {
         int action=0;
         Scanner in = new Scanner(System.in);
         do {
-            System.out.println("0.Вихід");
             System.out.println("1.Додати");
             System.out.println("2.Показати всі");
             System.out.println("3.Редагувати");
             System.out.println("4.Видалити");
+            System.out.println("5.Вихід");
             System.out.print("->_");
+            
             action=in.nextInt();
             switch(action) {
                 case 1: {
@@ -47,12 +49,19 @@ public class Main {
                     DeleteCategories();
                     break;
                 }
+                case 5: {
+                    System.out.println("Вихід...");
+                    break;
+                }
             }
         }while(action!=0);
     }
+
+    // Додавання товару
     private static void AddProduct() {
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
+        
         try (Session context = sf.openSession()) {
             context.beginTransaction();
             Product product = new Product();
@@ -70,10 +79,13 @@ public class Main {
             context.getTransaction().commit();
         }
     }
+
+    // Додавання категорії
     private static void AddCategory() {
         Calendar calendar = Calendar.getInstance();
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
+        
         try(Session context = sf.openSession()) {
             context.beginTransaction();
             Category category = new Category();
@@ -87,6 +99,7 @@ public class Main {
         }
     }
 
+    // Показ усіх товарів
     private static void ShowProducts() {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         try(Session context = sf.openSession()) {
@@ -99,6 +112,8 @@ public class Main {
             context.getTransaction().commit();
         }
     }
+
+    // Показ усіх категорій
     private static void ShowCategories() {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         try(Session context = sf.openSession()) {
@@ -112,9 +127,11 @@ public class Main {
         }
     }
 
+    // Редагування категорій
     private static void EditCategories() {
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
+        
         try(Session context = sf.openSession()) {
             context.beginTransaction();
             System.out.println("Вкажіть ID категорії: ");
@@ -137,9 +154,11 @@ public class Main {
         }
     }
 
+    // Видалення категорій
     private static void DeleteCategories() {
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
+        
         try (Session context = sf.openSession()) {
             context.beginTransaction();
             System.out.println("Вкажіть ID категорії: ");
