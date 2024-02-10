@@ -14,23 +14,25 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        //menu();
+        menu();
         //AddProduct();
-        ShowProducts();
+        //ShowProducts();
     }
 
-    // Меню на вибір операції
     private static void menu() {
         int action=0;
         Scanner in = new Scanner(System.in);
         do {
-            System.out.println("1.Додати");
-            System.out.println("2.Показати всі");
-            System.out.println("3.Редагувати");
-            System.out.println("4.Видалити");
-            System.out.println("5.Вихід");
+            System.out.println("0.Вихід");
+            System.out.println("1.Додати категорію");
+            System.out.println("2.Додати товар");
+            System.out.println("3.Показати всі категорії");
+            System.out.println("4.Показати всі товари");
+            System.out.println("5.Редагувати категорію");
+            System.out.println("6.Редагувати товар");
+            System.out.println("7.Видалити категорію");
+            System.out.println("8.Видалити товар");
             System.out.print("->_");
-            
             action=in.nextInt();
             switch(action) {
                 case 1: {
@@ -38,30 +40,39 @@ public class Main {
                     break;
                 }
                 case 2: {
-                    ShowCategories();
+                    AddProduct();
                     break;
                 }
                 case 3: {
-                    EditCategories();
+                    ShowCategories();
                     break;
                 }
                 case 4: {
-                    DeleteCategories();
+                    ShowProducts();
                     break;
                 }
                 case 5: {
-                    System.out.println("Вихід...");
+                    EditCategories();
+                    break;
+                }
+                case 6: {
+                    EditProduct();
+                    break;
+                }
+                case 7: {
+                    DeleteCategories();
+                    break;
+                }
+                case 8: {
+                    DeleteProduct();
                     break;
                 }
             }
         }while(action!=0);
     }
-
-    // Додавання товару
     private static void AddProduct() {
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        
         try (Session context = sf.openSession()) {
             context.beginTransaction();
             Product product = new Product();
@@ -79,13 +90,10 @@ public class Main {
             context.getTransaction().commit();
         }
     }
-
-    // Додавання категорії
     private static void AddCategory() {
         Calendar calendar = Calendar.getInstance();
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        
         try(Session context = sf.openSession()) {
             context.beginTransaction();
             Category category = new Category();
@@ -99,7 +107,6 @@ public class Main {
         }
     }
 
-    // Показ усіх товарів
     private static void ShowProducts() {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         try(Session context = sf.openSession()) {
@@ -112,8 +119,6 @@ public class Main {
             context.getTransaction().commit();
         }
     }
-
-    // Показ усіх категорій
     private static void ShowCategories() {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         try(Session context = sf.openSession()) {
@@ -127,14 +132,12 @@ public class Main {
         }
     }
 
-    // Редагування категорій
     private static void EditCategories() {
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        
         try(Session context = sf.openSession()) {
             context.beginTransaction();
-            System.out.println("Вкажіть ID категорії: ");
+            System.out.println("Вкажіть ID категорії для редагування: ");
             int categoryId = in.nextInt();
             Category category = context.get(Category.class, categoryId);
             if (category != null) {
@@ -147,29 +150,74 @@ public class Main {
                 category.setImage(newImage);
 
                 context.update(category);
-                System.out.println("Успішно відредаговано!");
+                System.out.println("Категорію успішно відредаговано!");
 
             } else { System.out.println("Категорію не знайдено!"); }
             context.getTransaction().commit();
         }
     }
 
-    // Видалення категорій
+    private static void EditProduct() {
+        Scanner in = new Scanner(System.in);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        try(Session context = sf.openSession()) {
+            context.beginTransaction();
+            System.out.println("Вкажіть ID товару для редагування: ");
+            int productId = in.nextInt();
+            Product product = context.get(Product.class, productId);
+            if (product != null) {
+                System.out.println("Вкажіть нову назву: ");
+                String newName = in.next();
+                System.out.println("Вкажіть новий опис: ");
+                String newDescription = in.next();
+                System.out.println("Вкажіть нову ціну: ");
+                double newPrice = in.nextDouble();
+
+                product.setName(newName);
+                product.setDescription(newDescription);
+                product.setPrice(newPrice);
+
+                context.update(product);
+                System.out.println("Товар успішно відредаговано!");
+
+            } else { System.out.println("Товар не знайдено!"); }
+            context.getTransaction().commit();
+        }
+    }
+
     private static void DeleteCategories() {
         Scanner in = new Scanner(System.in);
         SessionFactory sf = HibernateUtil.getSessionFactory();
-        
         try (Session context = sf.openSession()) {
             context.beginTransaction();
-            System.out.println("Вкажіть ID категорії: ");
+            System.out.println("Вкажіть ID категорії для видалення: ");
             int categoryId = in.nextInt();
             Category category = context.get(Category.class, categoryId);
             if (category != null) {
                 context.delete(category);
-                System.out.println("Успішно видалено!");
+                System.out.println("Категорію успішно видалено!");
 
             } else { System.out.println("Категорію не знайдено!"); }
             context.getTransaction().commit();
         }
     }
+
+    private static void DeleteProduct() {
+        Scanner in = new Scanner(System.in);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        try (Session context = sf.openSession()) {
+            context.beginTransaction();
+            System.out.println("Вкажіть ID товару для видалення: ");
+            int productId = in.nextInt();
+            Product product = context.get(Product.class, productId);
+            if (product != null) {
+                context.delete(product);
+                System.out.println("Товар успішно видалено!");
+
+            } else { System.out.println("Товар не знайдено!"); }
+            context.getTransaction().commit();
+        }
+    }
+
+
 }
