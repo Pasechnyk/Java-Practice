@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.models.Category;
+import org.example.models.Image;
 import org.example.models.Product;
 import org.example.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -8,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -86,6 +88,18 @@ public class Main {
             product.setCategory(category);
             System.out.print("Вкажіть ціну: ");
             product.setPrice(in.nextDouble());
+            System.out.print("Вкажіть кількість зображень: ");
+            int numImages = in.nextInt();
+            List<Image> images = new ArrayList<>();
+            for (int i = 0; i < numImages; i++) {
+                Image image = new Image();
+                System.out.printf("Вкажіть URL для зображення: ", i + 1);
+                image.setUrl(in.next());
+                image.setProduct(product);
+                images.add(image);
+            }
+            product.setImages(images);
+
             context.save(product);
             context.getTransaction().commit();
         }
@@ -172,7 +186,18 @@ public class Main {
                 String newDescription = in.next();
                 System.out.println("Вкажіть нову ціну: ");
                 double newPrice = in.nextDouble();
+                System.out.print("Вкажіть кількість зображень: ");
+                int numImages = in.nextInt();
+                List<Image> images = new ArrayList<>();
+                for (int i = 0; i < numImages; i++) {
+                    Image image = new Image();
+                    System.out.printf("Вкажіть URL для нового зображення: ", i + 1);
+                    image.setUrl(in.next());
+                    image.setProduct(product);
+                    images.add(image);
+                }
 
+                product.setImages(images);
                 product.setName(newName);
                 product.setDescription(newDescription);
                 product.setPrice(newPrice);
