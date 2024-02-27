@@ -38,7 +38,7 @@ const CategoryCard: React.FC<ICategoryCardProps> = (props) => {
                             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                             {/*@ts-expect-error*/}
                             <Button type="primary" icon={<EditOutlined/>}>
-                                Змінить
+                                Змінити
                             </Button>
                         </Link>,
 
