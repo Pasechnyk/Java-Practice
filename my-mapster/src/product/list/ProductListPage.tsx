@@ -4,7 +4,7 @@ import { IProductItem, IGetProduct } from "./types.ts";
 import http_common from "../../http_common.ts";
 
 const ProductListPage = () => {
-    // Стан для зберігання списку продуктів
+    // Стан для зберігання списку товарів
     const [products, setProducts] = useState<IGetProduct>({
         content: [],
         totalPages: 0,
@@ -14,10 +14,10 @@ const ProductListPage = () => {
 
     // Ефект, який викликається після завантаження компонента
     useEffect(() => {
-        // Виконуємо запит до сервера для отримання списку продуктів
+        // Виконуємо запит до сервера для отримання списку товарів
         http_common.get<IGetProduct>("/api/products")
             .then(resp => {
-                // Встановлюємо список продуктів у стан компонента
+                // Встановлюємо список товарів у стан компонента
                 setProducts(resp.data);
             })
             .catch(error => {
@@ -28,8 +28,8 @@ const ProductListPage = () => {
     // Повертаємо верстку сторінки
     return (
         <div>
-            <h1>Список продуктів</h1>
-            {/* Посилання для додавання нового продукту */}
+            <h1>Список товарів</h1>
+            {/* Посилання для додавання нового товару */}
             <Link to="/product/create">Додати продукт</Link>
             <ul>
                 {products.content.map((product: IProductItem) => (
