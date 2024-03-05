@@ -1,4 +1,4 @@
-import {Button, Col, Form, Input, Pagination, Row} from "antd";
+import {Button, Col, Form, Input, Pagination, Row, Select} from "antd"; // Додано Select для вибору поля сортування
 import {Link, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {ICategorySearch, IGetCategories} from "./types.ts";
@@ -7,7 +7,6 @@ import CategoryCard from "./CategoryCard.tsx";
 
 // Компонент сторінки списку категорій
 const CategoryListPage = () => {
-
     // Стан для зберігання даних категорій
     const [data, setData] = useState<IGetCategories>({
         content: [],
@@ -16,14 +15,16 @@ const CategoryListPage = () => {
         number: 0
     });
 
-    // Стан для зберігання параметрів пошуку
+    // Стан для зберігання параметрів пошуку і сортування
     const [searchParams, setSearchParams] = useSearchParams();
 
     // Стан для зберігання параметрів форми пошуку
     const [formParams, setFormParams] = useState<ICategorySearch>({
         name: searchParams.get('name') || "",
+        description: searchParams.get('description') || "", // Додала поле для опису
         page: Number(searchParams.get('page')) || 1,
-        size: Number(searchParams.get('size')) || 2
+        size: Number(searchParams.get('size')) || 2,
+        sortBy: searchParams.get('sortBy') || "id", // Додала параметр для сортування
     });
 
     // Стан для форми пошуку
@@ -31,7 +32,7 @@ const CategoryListPage = () => {
 
     // Функція, яка викликається після відправки форми пошуку
     const onSubmit = async (values: ICategorySearch) => {
-        findCategories({...formParams, page: 1, name: values.name});
+        findCategories({...formParams, page: 1, name: values.name, description: values.description});
     }
 
     // Ефект, який викликається після завантаження компонента
@@ -65,6 +66,11 @@ const CategoryListPage = () => {
     // Функція зміни сторінки категорій
     const handlePageChange = async (page: number, newPageSize: number) => {
         findCategories({...formParams, page, size: newPageSize});
+    };
+
+    // Функція зміни поля сортування
+    const handleSortChange = async (sortBy: string) => {
+        findCategories({...formParams, sortBy});
     };
 
     // Функція пошуку категорій
@@ -109,6 +115,26 @@ const CategoryListPage = () => {
                         htmlFor="name"
                     >
                         <Input autoComplete="name"/>
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Опис" // Додала поле для введення опису
+                        name="description"
+                        htmlFor="description"
+                    >
+                        <Input autoComplete="description"/>
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Сортувати за" // Додала поле для вибору сортування
+                        name="sortBy"
+                        htmlFor="sortBy"
+                    >
+                        <Select defaultValue="id" onChange={handleSortChange}>
+                            <Select.Option value="id">ID</Select.Option>
+                            <Select.Option value="name">Назва</Select.Option>
+                            <Select.Option value="description">Опис</Select.Option>
+                        </Select>
                     </Form.Item>
 
                     <Row style={{display: 'flex', justifyContent: 'center'}}>

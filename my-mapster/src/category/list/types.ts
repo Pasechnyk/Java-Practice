@@ -14,6 +14,8 @@ export interface IGetCategories {
 
 export interface ICategorySearch{
     name: string,
+    description: string,
     page: number,
-    size: number
+    size: number,
+    sortBy: string
 }
