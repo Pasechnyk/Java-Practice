@@ -1,6 +1,6 @@
 import {Button, Col, Form, Input, Pagination, Row, Select} from "antd"; // Додано Select для вибору поля сортування
 import {Link, useSearchParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {ICategorySearch, IGetCategories} from "./types.ts";
 import http_common from "../../http_common.ts";
 import CategoryCard from "./CategoryCard.tsx";
@@ -36,19 +36,19 @@ const CategoryListPage = () => {
     }
 
     // Ефект, який викликається після завантаження компонента
-    useEffect(() => {
-        http_common.get<IGetCategories>("/api/categories/search", {
-            params: {
-                ...formParams,
-                page: formParams.page-1
-            }
-        })
-            .then(resp => {
-                console.log("Items", resp.data);
-                setData(resp.data);
-                form.setFieldsValue(formParams);
-            });
-    }, [formParams]);
+    // useEffect(() => {
+    //     http_common.get<IGetCategories>("/api/categories/search", {
+    //         params: {
+    //             ...formParams,
+    //             page: formParams.page-1
+    //         }
+    //     })
+    //         .then(resp => {
+    //             console.log("Items", resp.data);
+    //             setData(resp.data);
+    //             form.setFieldsValue(formParams);
+    //         });
+    // }, [formParams]);
 
     // Розпакування даних категорій
     const {content, totalElements} = data;
