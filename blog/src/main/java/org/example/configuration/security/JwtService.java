@@ -77,7 +77,7 @@ public class JwtService {
 
         return claims.getExpiration();
     }
-    //перевфряє чи наш токен валідний і чи видавався нашим сервером
+    //перевіряє чи наш токен валідний і чи видавався нашим сервером
     public boolean validate(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);

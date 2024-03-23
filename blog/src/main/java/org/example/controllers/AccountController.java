@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
     private final AccountService service;
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto dto) {
         try {
             var auth = service.login(dto);
@@ -29,15 +29,14 @@ public class AccountController {
         }
     }
 
-    @PostMapping("register")
-    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterDto dto) {
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterDto dto) {
         try {
-            var auth = service.register(dto);
-            return ResponseEntity.ok(auth);
+            service.register(dto);
+            return ResponseEntity.ok().build();
         }
         catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
-
 }
