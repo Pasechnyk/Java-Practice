@@ -25,41 +25,41 @@ public class JwtService {
 
     private final UserRoleRepository userRoleRepository;
     @Value("${it.step.app.jwtSecret}")
-    private String jwtSecret;  //ключ, яким ми шифруємо (будь-які букви чи цифри)
-    private final String jwtIssuer = "step.io";   //вказує хто власник цього токена. Можна вписати ім'я свого домена
+    private String jwtSecret; //ключ, яким ми шифруємо (будь-які букви чи цифри)
+    private final String jwtIssuer = "step.io"; //вказує хто власник цього токена
 
-    //метод призначений для того, щоб для визначеного юзера зробити jwt token
+    //Метод створення jwt token для користувача
     public String generateAccessToken(UserEntity user) {
         var roles = userRoleRepository.findByUser(user);
         return Jwts.builder()
                 .setSubject(format("%s,%s", user.getId(), user.getEmail()))
                 .claim("email", user.getEmail())
-//.claim("image", user.getImage())
-                .claim("roles", roles.stream()                                      //витягується списочок ролей, які є у юзера
+                .claim("roles", roles.stream()                                      
+                       //витягується списочок ролей, які є у юзера
                         .map((role) -> role.getRole().getName()).toArray(String []:: new))
                 .setIssuer(jwtIssuer) //записуємо хто власник токена
                 .setIssuedAt(new Date(System.currentTimeMillis()))  //коли був створений токен
                 .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 1 week  зазначаємо скільки часу буде жити токен
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)  //шифруємо токен за допомогою сікретного ключа
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)  //шифруємо токен за допомогою ключа
                 .compact();
     }
-
 
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // з токена можна витягнути Id юзера
+    // Витягуэмо Id 
     public String getUserId(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)    // перевіряється чи цей токен видавався нашим серваком
+                .setSigningKey(jwtSecret) 
                 .parseClaimsJws(token)
                 .getBody();
 
         return claims.getSubject().split(",")[0]; //з токена бере перший елемент Id
     }
-    // з токена можна витягнути username юзера
+    
+    // Витягуємо ім'я
     public String getUsername(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -68,7 +68,8 @@ public class JwtService {
 
         return claims.getSubject().split(",")[1];
     }
-    // метод повертає дату до якої живе токен
+    
+    // Тривалість токену
     public Date getExpirationDate(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -77,7 +78,8 @@ public class JwtService {
 
         return claims.getExpiration();
     }
-    //перевіряє чи наш токен валідний і чи видавався нашим сервером
+    
+    // Перевіряє чи наш токен валідний і чи видавався нашим сервером
     public boolean validate(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
